@@ -156,6 +156,87 @@ public class ItemResource {
     
     
     
+   
+    
+    @GET
+            @Path("getItemListByAvailablity")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getItemListByAvailablity() {
+        
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        
+        Connection conn = null;
+              conn=  databaseConn.getConnection(conn);
+         
+        try {     
+            String itemname,itemDesc,isAvailable,availableDate,itemCondition,borrowNum,addedDate;
+            int itemId;
+                        
+              String sql;
+    sql = "SELECT itemId,itemname,itemDesc,isAvailable,availableDate,itemCondition,borrowNum,addedDate from Item where isAvailable = '1'";
+    
+   
+      PreparedStatement stm = conn.prepareStatement(sql);
+              
+                ResultSet rs=stm.executeQuery();
+
+                while(rs.next()) {
+                    itemId = rs.getInt("itemId");
+                    itemname = rs.getString("itemname");
+                    itemDesc = rs.getString("itemDesc");
+                     isAvailable = rs.getString("isAvailable");
+                    availableDate = rs.getString("availableDate");
+                    itemCondition = rs.getString("itemCondition");
+                     borrowNum = rs.getString("borrowNum");
+                    addedDate = rs.getString("addedDate");
+      
+   
+//Display values
+    
+         singleChoice.accumulate("itemId", itemId);
+        singleChoice.accumulate("itemname", itemname);
+        singleChoice.accumulate("itemDesc", itemDesc);
+        singleChoice.accumulate("isAvailable", isAvailable);
+        singleChoice.accumulate("availableDate", availableDate);
+        singleChoice.accumulate("itemCondition", itemCondition);
+        singleChoice.accumulate("borrowNum", borrowNum);
+        singleChoice.accumulate("addedDate", addedDate);
+
+        
+        mainArray.add(singleChoice);
+        singleChoice.clear();
+     
+    }
+                singleChoice.accumulate("Status", "ok");
+        singleChoice.accumulate("Timestamp", timeStamp);
+        singleChoice.accumulate("itemLists", mainArray);
+                     databaseConn.closeConnection(conn,rs,stm);
+
+
+        }
+        catch (SQLException ex) {
+                       msg=ex.getMessage();
+                      
+                    } catch (Exception ex) {
+              msg=ex.getMessage();
+          }
+ 
+        if(mainArray.toString().equals("[]"))
+        {
+            singleChoice.clear();
+                   
+             singleChoice.accumulate("Status", "error");
+        singleChoice.accumulate("Timestamp", timeStamp);
+       
+       }
+        
+         return singleChoice.toString();
+         
+    }
+    
+    
     
     
     
