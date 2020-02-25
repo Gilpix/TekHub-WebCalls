@@ -291,5 +291,246 @@ public class AdminResource {
         
          return singleChoice.toString();
              }
+ 
+    
+    //find item
+    
+    @GET
+    @Path("getItems")
+    @Produces("text/plain")
+    public String getItemList() {
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        
+         Connection conn = null;
+         conn=  databaseConn.getConnection(conn);
+         
+         try {     
+            String itemname,itemDesc,isAvailable,availableDate,addedDate,borrowNum,itemCondi;
+            int itemId;
+                        
+              String sql;
+    sql = "SELECT itemId,itemname,itemDesc,isAvailable,availableDate,itemCondition,borrowNum, addedDate from Item";
+    
+    
+   
+      PreparedStatement stm = conn.prepareStatement(sql);
+              
+                ResultSet rs=stm.executeQuery();
+
+                while(rs.next()) {
+                    itemId = rs.getInt("itemId");
+                    itemname = rs.getString("itemname");
+                    itemDesc = rs.getString("itemDesc");
+                     isAvailable = rs.getString("isAvailable");
+                    availableDate = rs.getString("availableDate");
+                    itemCondi = rs.getString("itemCondition");
+                    borrowNum = rs.getString("borrowNum");
+                    addedDate = rs.getString("AddedDate");
+   
+//Display values
+    
+         singleChoice.accumulate("ItemId", itemId);
+        singleChoice.accumulate("ItemName", itemname);
+        singleChoice.accumulate("ItemDesc", itemDesc);
+        singleChoice.accumulate("isAvailable", isAvailable);
+        singleChoice.accumulate("AvailableDate", availableDate);
+        singleChoice.accumulate("ItemCondition", itemCondi);
+        singleChoice.accumulate("AddedDate", addedDate);
+        singleChoice.accumulate("BorrowNumber", borrowNum);
+
+        
+        mainArray.add(singleChoice);
+        singleChoice.clear();
+     
+    }
+                singleChoice.accumulate("Status", "Ok");
+        singleChoice.accumulate("Timestamp", timeStamp);
+        singleChoice.accumulate("itemLists", mainArray);
+                     databaseConn.closeConnection(conn,rs,stm);
+
+
+        }catch (SQLException ex) {
+            String msg = ex.getMessage();
+                      
+                    } catch (Exception ex) {
+            String msg = ex.getMessage();
+          }
+         if(mainArray.toString().equals("[]"))
+        {
+            singleChoice.clear();
+                   
+             singleChoice.accumulate("Status", "Error");
+        singleChoice.accumulate("Timestamp", timeStamp);
+       
+       }
+        
+         return singleChoice.toString();
+       
+        
+            }
+    
+    
+    @GET
+    @Path("deleteItem&{item_id}")
+    @Produces("text/plain")
+    public String addItem(@PathParam("item_id") int itemId)
+             {
+      
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+        int qRes;
+        qRes = 0;
+
+      
+        try {           
+            
+             String sql,sql2;
+            sql = "DELETE FROM Item where ItemId="+itemId;    
+            PreparedStatement stm1 = conn.prepareStatement(sql);
+                  qRes=stm1.executeUpdate();
+        
+            
+                
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "Ok");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                  else{
+                      mainObject.accumulate("Status", "Error");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                    
+ 
+      
+                  databaseConn.closeConnection(conn,null,stm1);
+            
+        } catch (SQLException ex) {
+            String Message = ex.getMessage();
+        }
+             // throw new UnsupportedOperationException();
+  return mainObject.toString();
+    }
+    
+        @GET
+    @Path("searchItem&{searchKey}")
+    @Produces("text/plain")
+    public String searchItems(@PathParam("searchKey") String item_name) throws SQLException
+             {
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        String itemname,itemDesc,isAvailable,availableDate,addedDate,borrowNum,itemCondi;
+            int itemId;
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+
+        try {           
+            String studentName,studentEmail;
+            int studentId;
+            Instant instant=Instant.now();
+            long time=instant.getEpochSecond();
+             String sql;
+            sql = "SELECT itemId,itemname,itemDesc,isAvailable,availableDate,itemCondition,"
+                    + "borrowNum, addedDate from Item where itemname like '%"+item_name+"%'";
+    
+            PreparedStatement stm1 = conn.prepareStatement(sql);
+            ResultSet rs=stm1.executeQuery();
+                    while(rs.next()) {
+                    itemId = rs.getInt("itemId");
+                    itemname = rs.getString("itemname");
+                    itemDesc = rs.getString("itemDesc");
+                     isAvailable = rs.getString("isAvailable");
+                    availableDate = rs.getString("availableDate");
+                    itemCondi = rs.getString("itemCondition");
+                    borrowNum = rs.getString("borrowNum");
+                    addedDate = rs.getString("AddedDate");
+   
+//Display values
+    
+         singleChoice.accumulate("ItemId", itemId);
+        singleChoice.accumulate("ItemName", itemname);
+        singleChoice.accumulate("ItemDesc", itemDesc);
+        singleChoice.accumulate("isAvailable", isAvailable);
+        singleChoice.accumulate("AvailableDate", availableDate);
+        singleChoice.accumulate("ItemCondition", itemCondi);
+        singleChoice.accumulate("AddedDate", addedDate);
+        singleChoice.accumulate("BorrowNumber", borrowNum);
+
+        
+        mainArray.add(singleChoice);
+        singleChoice.clear();
+     
+    }
+               singleChoice.accumulate("Status", "Ok");
+        singleChoice.accumulate("Timestamp", timeStamp);
+        singleChoice.accumulate("itemLists", mainArray);
+                     databaseConn.closeConnection(conn,rs,stm1);
+
+
+        }catch (SQLException ex) {
+            String msg = ex.getMessage();
+                      
+                    } catch (Exception ex) {
+            String msg = ex.getMessage();
+          }
+        if(mainArray.toString().equals("[]"))
+        {
+            singleChoice.clear();
+                   
+             singleChoice.accumulate("Status", "Error");
+        singleChoice.accumulate("Timestamp", timeStamp);
+       
+       }
+        
+         return singleChoice.toString();
+      
+            }
+//update  Items to database
+    @GET
+    @Path("updateItem&{ITEM_NAME}&{ITEM_DESC}&{ITEM_CONDITION}&{ITEM_ID}")
+    @Produces("text/plain")
+    public String updateItem(@PathParam("ITEM_NAME") String item_name, 
+            @PathParam("ITEM_DESC") String item_desc, 
+            @PathParam("ITEM_CONDITION") String item_conditon,
+            @PathParam("ITEM_ID") int itemid) {
+      
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+        int qRes=0;
+
+        try {           
+            
+             String sql;
+            sql = "update Item set itemname=?, itemDesc=?, itemCondition=? where itemId=?";
+    
+                PreparedStatement stm = conn.prepareStatement(sql);
+                stm.setString(1,item_name);
+                stm.setString(2,item_desc);
+                stm.setString(3,item_conditon);
+                stm.setInt(4,itemid);
+                qRes=stm.executeUpdate();
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "Ok");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                  else{
+                      mainObject.accumulate("Status", "Error");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+             
+ 
+      
+                  databaseConn.closeConnection(conn,null,stm);
+            
+        } catch (SQLException ex) {
+            Message=ex.getMessage();
+        }
+             // throw new UnsupportedOperationException();
+  return mainObject.toString();
+    }
     
 }
