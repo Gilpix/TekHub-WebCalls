@@ -29,9 +29,13 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(tekhub.AdminResource.class);
         resources.add(tekhub.DatabaseConnection.class);
+        resources.add(tekhub.FeedbackResource.class);
         resources.add(tekhub.ItemResource.class);
+        resources.add(tekhub.OrdersResource.class);
         resources.add(tekhub.UserResource.class);
+        resources.add(tekhub.WaitingItemResource.class);
     }
     
 }

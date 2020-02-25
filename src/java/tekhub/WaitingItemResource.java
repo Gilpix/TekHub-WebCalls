@@ -5,10 +5,16 @@
  */
 package tekhub;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Blob;
 import java.sql.Connection;
+import static java.sql.JDBCType.BLOB;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import static java.sql.Types.BLOB;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.ws.rs.core.Context;
@@ -22,6 +28,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import static oracle.jdbc.OracleTypes.BLOB;
+import oracle.sql.BLOB;
 
 /**
  * REST Web Service
@@ -220,7 +228,5 @@ public class WaitingItemResource {
     
     
     
-    
-    
-    
+   
 }

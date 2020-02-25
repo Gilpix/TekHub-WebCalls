@@ -90,10 +90,10 @@ public class OrdersResource {
     
     
     @GET
-    @Path("placeOrder&{USERID}&{ITEMID}&{PICKUPDATE}&{RETURNDATE}")
+    @Path("placeOrder&{USERID}&{ITEMID}&{PICKUPDATE}&{RETURNDATE}&{BORROWNUM}")
     @Produces(MediaType.APPLICATION_JSON)
     public String placeOrder(@PathParam("USERID") int userId, @PathParam("ITEMID") int itemId,
-            @PathParam("PICKUPDATE") java.sql.Date pickupDate, @PathParam("RETURNDATE") java.sql.Date returnDate) {
+            @PathParam("PICKUPDATE") java.sql.Date pickupDate, @PathParam("RETURNDATE") java.sql.Date returnDate,@PathParam("BORROWNUM") int borrowNum) {
         
         
         
@@ -106,7 +106,7 @@ public class OrdersResource {
             
               String sql;
     sql = "Insert Into Orders(userId,itemId,orderDate,pickupDate,returnDate) Values (?,?,?,?,?);";
-    String sql1 ="Update Item set isAvailable =?,availableDate=? where  itemId=?"; 
+    String sql1 ="Update Item set isAvailable =?,availableDate=?,borrowNum=? where itemId=?"; 
  
     
    
@@ -122,7 +122,8 @@ public class OrdersResource {
                  PreparedStatement stm1 = conn.prepareStatement(sql1);
                 stm1.setString(1,"0");
                 stm1.setDate(2,returnDate);
-                stm1.setInt(3,itemId);
+                stm1.setInt(3,borrowNum+1);
+                stm1.setInt(4,itemId);
               
                 
               
