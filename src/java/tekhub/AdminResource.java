@@ -532,5 +532,107 @@ public class AdminResource {
              // throw new UnsupportedOperationException();
   return mainObject.toString();
     }
+    //list issues
     
+        @GET
+    @Path("listIssues")
+    @Produces("text/plain")
+    public String listIssues()
+             {
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+
+        try {           
+            String itemName,msg;
+            int itemID,fId;
+            Instant instant=Instant.now();
+            long time=instant.getEpochSecond();
+             String sql;
+            sql = "select Feedback.feedId,Feedback.itemId,Item.itemname,Feedback.message from Feedback\n" +
+"join Item on Item.itemId=Feedback.itemId\n" +
+"where Feedback.isIssue=\"1\"";
+    
+            PreparedStatement stm1 = conn.prepareStatement(sql);
+            ResultSet rs=stm1.executeQuery();
+            while(rs.next()) {
+                    fId = rs.getInt("feedId");
+                    itemID = rs.getInt("itemId");
+                    itemName = rs.getString("itemname");
+                    msg = rs.getString("message");
+                    singleChoice.accumulate("feedid", fId);
+                    singleChoice.accumulate("itemId", itemID);
+                    singleChoice.accumulate("itemname", itemName);
+                    singleChoice.accumulate("message", msg);
+                    mainArray.add(singleChoice);
+                    singleChoice.clear();
+     
+    }    
+                    singleChoice.accumulate("Status", "Ok");
+                    singleChoice.accumulate("Timestamp", timeStamp);
+                    singleChoice.accumulate("issueList", mainArray);
+                     databaseConn.closeConnection(conn,rs,stm1);
+
+
+        }
+        catch (SQLException ex) {
+            String msg = ex.getMessage();
+                      
+                    } catch (Exception ex) {
+            String msg = ex.getMessage();
+          }
+ 
+        if(mainArray.toString().equals("[]"))
+        {
+            singleChoice.clear();
+                   
+             singleChoice.accumulate("Status", "Error");
+        singleChoice.accumulate("Timestamp", timeStamp);
+       
+       }
+        
+         return singleChoice.toString();
+             }
+    
+    //Solve Issue
+     @GET
+    @Path("updateFeedback&{FEED_ID}")
+    @Produces("text/plain")
+    public String solveIssue(@PathParam("FEED_ID") String feed_id) {
+      
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+        int qRes=0;
+
+        try {           
+            
+             String sql;
+            sql = "update Feedback\n" +
+"set isIssue=\"0\"\n" +
+"where feedId="+feed_id;
+    
+                PreparedStatement stm = conn.prepareStatement(sql);
+                qRes=stm.executeUpdate();
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "Ok");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                  else{
+                      mainObject.accumulate("Status", "Error");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+             
+ 
+      
+                  databaseConn.closeConnection(conn,null,stm);
+            
+        } catch (SQLException ex) {
+            Message=ex.getMessage();
+        }
+             // throw new UnsupportedOperationException();
+  return mainObject.toString();
+    }
 }
