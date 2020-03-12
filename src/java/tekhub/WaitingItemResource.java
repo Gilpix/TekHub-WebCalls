@@ -226,7 +226,118 @@ public class WaitingItemResource {
     }
     
     
+  
     
+    
+    
+    @GET
+    @Path("deleteWaitingItem&{USERID}&{ITEMID}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String deleteWaitingItem(@PathParam("USERID") int userId, @PathParam("ITEMID") int itemId) {
+        
+        
+        
+        Connection conn = null;
+              conn=  databaseConn.getConnection(conn);
+              int qRes=0;
+              
+         
+        try {           
+            
+              String sql;
+    sql = "DELETE FROM WaitingItem WHERE userId=? and itemId=? ;";
+ 
     
    
+      PreparedStatement stm = conn.prepareStatement(sql);
+                stm.setInt(1,userId);
+                stm.setInt(2,itemId);
+              
+                
+              
+
+                  qRes=stm.executeUpdate();
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "ok");
+                  }
+
+    
+                  databaseConn.closeConnection(conn,null,stm);
+            
+        } catch (SQLException ex) {
+            Message=ex.getMessage();
+        }
+        
+         if(qRes!=1)
+        {
+            mainObject.clear();
+        mainObject.accumulate("Status", "error");
+//        mainObject.accumulate("Timestamp", timeStamp);
+        mainObject.accumulate("Message", "Not Registered");
+       }
+         
+         return mainObject.toString();
+         
+    }
+    
+    
+    
+     
+    @GET
+    @Path("addItemImage&{PRIKEY}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String addItemImage( @PathParam("PRIKEY") int priKey) {
+        
+        
+        
+        Connection conn = null;
+              conn=  databaseConn.getConnection(conn);
+              int qRes=0;
+              
+         
+        try {           
+            File file=new File("/Users/kulartist/Desktop/TekHub Resources/icons/filter.png");
+			FileInputStream fis= new FileInputStream(file);
+                        System.out.println((int)file.length()+"############@@@@@@"+fis.toString());
+			
+			PreparedStatement ps=conn.prepareStatement("insert into test (imageTest,prikey) values(?,?)"); 
+			ps.setInt(2,priKey);
+			ps.setBinaryStream(1,fis,(int)file.length());
+			
+                        
+
+                        
+                  qRes=ps.executeUpdate();
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "ok");
+                  }
+
+    
+                  databaseConn.closeConnection(conn,null,ps);
+            
+        } catch (SQLException ex) {
+            Message=ex.getMessage();
+        } catch (Exception ex) {
+            System.out.println("################"+ex.getMessage());
+              //Logger.getLogger(WaitingItemResource.class.getName()).log(Level.SEVERE, null, ex);
+          }
+        
+         if(qRes!=1)
+        {
+            mainObject.clear();
+        mainObject.accumulate("Status", "error");
+//        mainObject.accumulate("Timestamp", timeStamp);
+        mainObject.accumulate("Message", "Not Registered");
+       }
+         
+         return mainObject.toString();
+         
+    }
+    
+    
+    
+    
+    
 }

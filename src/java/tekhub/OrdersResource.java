@@ -106,7 +106,10 @@ public class OrdersResource {
             
               String sql;
     sql = "Insert Into Orders(userId,itemId,orderDate,pickupDate,returnDate) Values (?,?,?,?,?);";
+   
     String sql1 ="Update Item set isAvailable =?,availableDate=?,borrowNum=? where itemId=?"; 
+     //String sql2="Update Orders set returnDate=? where itemId=?";
+     Date temp=returnDate;
  
     
    
@@ -115,7 +118,7 @@ public class OrdersResource {
                 stm.setInt(2,itemId);
                 stm.setDate(3,getCurrentDate());
                 stm.setDate(4, (pickupDate));
-                stm.setDate(5, (returnDate));
+                stm.setDate(5, Date.valueOf((temp.toLocalDate().plusDays(1)).toString()));
                 
                 
                 
@@ -124,6 +127,10 @@ public class OrdersResource {
                 stm1.setDate(2,returnDate);
                 stm1.setInt(3,borrowNum+1);
                 stm1.setInt(4,itemId);
+                
+//                 PreparedStatement stm2 = conn.prepareStatement(sql2);
+//                stm1.setDate(1,returnDate);
+//                stm1.setInt(2,itemId);
               
                 
               

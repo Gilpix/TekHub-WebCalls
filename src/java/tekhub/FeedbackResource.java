@@ -147,8 +147,6 @@ public class FeedbackResource {
     
     
     
-       
-    
 @GET
             @Path("getFeedbackList&{ITEMID}")
     @Produces(MediaType.APPLICATION_JSON)

@@ -378,7 +378,51 @@ public class UserResource  {
     
     
     
+     
+    @GET
+    @Path("resetPassword&{USERID}&{PASSWORD}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String resetPassword(@PathParam("USERID") int user_id,  @PathParam("PASSWORD") String newPassword) {
+        
+       
+        Connection conn = null;
+              conn=  databaseConn.getConnection(conn);
+              int qRes=0;
+         
+        try {           
+          
+              String sql;
+    sql = "UPDATE User set password=? where userId=?;";
     
+   
+      PreparedStatement stm = conn.prepareStatement(sql);
+                stm.setString(1,newPassword);
+                stm.setInt(2,user_id);
+                
+                  qRes=stm.executeUpdate();
+                
+                  if(qRes==1)
+                  {
+                   mainObject.accumulate("Status", "ok");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                  databaseConn.closeConnection(conn,null,stm);
+            
+        } catch (SQLException ex) {
+            Message=ex.getMessage();
+        }
+        
+         if(qRes!=1)
+        {
+            mainObject.clear();
+        mainObject.accumulate("Status", "error");
+        mainObject.accumulate("Timestamp", timeStamp);
+        mainObject.accumulate("Message", "Not Registered");
+       }
+         
+         return mainObject.toString();
+         
+    }
     
     
     
