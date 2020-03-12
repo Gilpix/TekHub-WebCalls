@@ -635,4 +635,55 @@ public class AdminResource {
              // throw new UnsupportedOperationException();
   return mainObject.toString();
     }
+    
+    
+    @GET
+    @Path("logout")
+    @Produces("text/plain")
+    public String getOutHouse()
+             {
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        Connection conn = null;
+        int qRes1 = 0;
+
+        conn=  databaseConn.getConnection(conn);
+
+        try {           
+            
+            Instant instant=Instant.now();
+            long time=instant.getEpochSecond();
+             String sql;
+            sql = "update User set isActive=1 where userId=1234567";
+    
+            System.out.println(sql);
+
+            PreparedStatement stm3 = conn.prepareStatement(sql);
+            qRes1=stm3.executeUpdate();
+            
+                        System.out.println(qRes1);
+
+            if(qRes1==1)
+                  {
+                   mainObject.accumulate("Status", "Ok");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                  else{
+                      mainObject.accumulate("Status", "Error");
+                    mainObject.accumulate("Timestamp", timeStamp);
+                  }
+                 databaseConn.closeConnection(conn,null,stm3);
+
+
+        }
+        catch (SQLException ex) {
+            String msg = ex.getMessage();
+                      
+                    } catch (Exception ex) {
+            String msg = ex.getMessage();
+                    }
+        
+         return mainObject.toString();
+             }
 }
