@@ -22,6 +22,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.core.MediaType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -297,7 +298,7 @@ public class AdminResource {
     
     @GET
     @Path("getItems")
-    @Produces("text/plain")
+    @Produces(MediaType.APPLICATION_JSON)
     public String getItemList() {
         JSONObject singleChoice =new JSONObject();
         mainObject.clear();

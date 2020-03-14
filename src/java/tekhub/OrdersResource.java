@@ -116,8 +116,8 @@ public class OrdersResource {
       PreparedStatement stm = conn.prepareStatement(sql);
                 stm.setInt(1,userId);
                 stm.setInt(2,itemId);
-                stm.setDate(3,getCurrentDate());
-                stm.setDate(4, (pickupDate));
+                stm.setDate(3,Date.valueOf((getCurrentDate().toLocalDate().plusDays(1)).toString()));
+                stm.setDate(4, Date.valueOf((pickupDate.toLocalDate().plusDays(1)).toString()));
                 stm.setDate(5, Date.valueOf((temp.toLocalDate().plusDays(1)).toString()));
                 
                 
@@ -183,12 +183,12 @@ public class OrdersResource {
               conn=  databaseConn.getConnection(conn);
          
         try {     
-            String itemname,itemDesc,itemCondition;
+            String itemname,itemDesc,itemCondition,itemPic;
             java.sql.Date orderDate,pickupDate,returnDate;
             int itemId,orderId;
                         
               String sql;
-    sql = "SELECT orderId,Orders.itemId,itemname,itemDesc,itemCondition,orderDate,pickupDate,returnDate from Item join Orders On Orders.itemId=Item.itemId where userId=?;";
+    sql = "SELECT orderId,Orders.itemId,itemname,itemDesc,itemCondition,orderDate,pickupDate,returnDate,Item.itemPic from Item join Orders On Orders.itemId=Item.itemId where userId=?;";
     
    
       PreparedStatement stm = conn.prepareStatement(sql);
@@ -208,6 +208,7 @@ public class OrdersResource {
                     orderDate = rs.getDate("orderDate"); 
                     pickupDate = rs.getDate("pickupDate"); 
                     returnDate = rs.getDate("returnDate"); 
+                    itemPic = rs.getString("itemPic"); 
       
    
 //Display values
@@ -222,6 +223,7 @@ public class OrdersResource {
         singleChoice.accumulate("orderDate", orderDate.toString());
         singleChoice.accumulate("pickupDate", pickupDate.toString());
         singleChoice.accumulate("returnDate", returnDate.toString());
+        singleChoice.accumulate("itemPic", itemPic.toString());
    
         
         mainArray.add(singleChoice);

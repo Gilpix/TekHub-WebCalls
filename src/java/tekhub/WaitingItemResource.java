@@ -168,12 +168,12 @@ public class WaitingItemResource {
               conn=  databaseConn.getConnection(conn);
          
         try {     
-            String itemname,itemDesc,itemCondition;
+            String itemname,itemDesc,itemCondition,itemPic;
             java.sql.Date availableDate;
             int itemId,orderId;
                         
               String sql;
-    sql = "SELECT WaitingItem.itemId,itemname,availableDate from Item join WaitingItem On WaitingItem.itemId=Item.itemId " +
+    sql = "SELECT WaitingItem.itemId,itemname,availableDate,Item.itemPic from Item join WaitingItem On WaitingItem.itemId=Item.itemId " +
 "join User On User.userId=WaitingItem.userId where User.userId=?;";
     
    
@@ -188,7 +188,7 @@ public class WaitingItemResource {
                 while(rs.next()) {
                     itemId = rs.getInt("itemId");
                     itemname = rs.getString("itemname");
-                   
+                   itemPic = rs.getString("itemPic"); 
                     availableDate = rs.getDate("availableDate"); 
       
    
@@ -198,6 +198,7 @@ public class WaitingItemResource {
           
            singleChoice.accumulate("itemId", itemId);
         singleChoice.accumulate("itemname", itemname);
+        singleChoice.accumulate("itemPic", itemPic);
       
         singleChoice.accumulate("availableDate", availableDate.toString());
    
