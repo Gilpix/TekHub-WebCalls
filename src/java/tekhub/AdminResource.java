@@ -491,11 +491,12 @@ public class AdminResource {
             }
 //update  Items to database
     @GET
-    @Path("updateItem&{ITEM_NAME}&{ITEM_DESC}&{ITEM_CONDITION}&{ITEM_ID}")
+    @Path("updateItem&{ITEM_NAME}&{ITEM_DESC}&{ITEM_CONDITION}&{ITEM_AVAILABILITY}&{ITEM_ID}")
     @Produces("text/plain")
     public String updateItem(@PathParam("ITEM_NAME") String item_name, 
             @PathParam("ITEM_DESC") String item_desc, 
             @PathParam("ITEM_CONDITION") String item_conditon,
+            @PathParam("ITEM_AVAILABILITY") String item_avail,
             @PathParam("ITEM_ID") int itemid) {
       
         Connection conn = null;
@@ -505,13 +506,14 @@ public class AdminResource {
         try {           
             
              String sql;
-            sql = "update Item set itemname=?, itemDesc=?, itemCondition=? where itemId=?";
+            sql = "update Item set itemname=?, itemDesc=?, itemCondition=?,isAvailable=? where itemId=?";
     
                 PreparedStatement stm = conn.prepareStatement(sql);
                 stm.setString(1,item_name);
                 stm.setString(2,item_desc);
                 stm.setString(3,item_conditon);
-                stm.setInt(4,itemid);
+                stm.setString(4,item_avail);
+                stm.setInt(5,itemid);
                 qRes=stm.executeUpdate();
                   if(qRes==1)
                   {
@@ -686,5 +688,79 @@ public class AdminResource {
                     }
         
          return mainObject.toString();
+             }
+    
+    
+            @GET
+    @Path("listOrders")
+    @Produces("text/plain")
+    public String listOrders()
+             {
+        JSONObject singleChoice =new JSONObject();
+        mainObject.clear();
+        mainArray.clear();
+        Connection conn = null;
+        conn=  databaseConn.getConnection(conn);
+
+        try {           
+            String itemName,name,orderDate,pickupdate,returnDate;
+            int itemID,orderID,userId;
+            Instant instant=Instant.now();
+            long time=instant.getEpochSecond();
+             String sql;
+            sql = "select orderId,Orders.itemId,Item.itemname,User.userId,User.name,orderDate,pickupDate,returnDate from Orders\n" +
+"join User on User.userId=Orders.userId\n" +
+"join Item on Item.itemId=Orders.itemId;";
+    
+            PreparedStatement stm1 = conn.prepareStatement(sql);
+            ResultSet rs=stm1.executeQuery();
+            while(rs.next()) {
+                    orderID = rs.getInt("orderId");
+                    itemID = rs.getInt("itemId");
+                    itemName = rs.getString("itemname");
+                    userId = rs.getInt("userId");
+                    name = rs.getString("name");
+                    orderDate = rs.getString("orderDate");
+                    pickupdate = rs.getString("pickupDate");
+                    returnDate = rs.getString("returnDate");
+                    
+                    
+                    singleChoice.accumulate("orderId", orderID);
+                    singleChoice.accumulate("itemId", itemID);
+                    singleChoice.accumulate("itemname", itemName);
+                    singleChoice.accumulate("userId", userId);
+                    singleChoice.accumulate("name", name);
+                    singleChoice.accumulate("orderDate", orderDate);
+                    singleChoice.accumulate("pickupDate", pickupdate);
+                    singleChoice.accumulate("returnDate", returnDate);
+                    
+                    mainArray.add(singleChoice);
+                    singleChoice.clear();
+     
+    }    
+                    singleChoice.accumulate("Status", "Ok");
+                    singleChoice.accumulate("Timestamp", timeStamp);
+                    singleChoice.accumulate("orderList", mainArray);
+                     databaseConn.closeConnection(conn,rs,stm1);
+
+
+        }
+        catch (SQLException ex) {
+            String msg = ex.getMessage();
+                      
+                    } catch (Exception ex) {
+            String msg = ex.getMessage();
+          }
+ 
+        if(mainArray.toString().equals("[]"))
+        {
+            singleChoice.clear();
+                   
+             singleChoice.accumulate("Status", "Error");
+        singleChoice.accumulate("Timestamp", timeStamp);
+       
+       }
+        
+         return singleChoice.toString();
              }
 }
