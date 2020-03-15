@@ -12,14 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
-import javax.ws.rs.core.MediaType;
 
 /**
  * REST Web Service
@@ -34,7 +27,7 @@ public class DatabaseConnection {
      static String un = "kuldeep";
      static String password = "Sonu1993";    
     
-   
+
     public Connection getConnection(Connection conn) {
       
         try {
@@ -43,23 +36,18 @@ public class DatabaseConnection {
             
         } catch (SQLException ex) {
             //Logger.getLogger(ShapesAny.class.getName()).log(Level.SEVERE, null, ex);
-            //return ex.getMessage();
-             System.out.println(ex.getMessage()+"1111#######################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$###");
+             System.out.println(ex.getMessage());
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
-             System.out.println(ex.getMessage()+"  22222#######################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$###");
+             System.out.println(ex.getMessage());
            // return ex.getMessage();
         }
 
          return conn;
-        
     }
     
     
-    
-    
      public void closeConnection(Connection conn, ResultSet rs,PreparedStatement ps )  {
-         
          
         try {
                         if (rs != null)
@@ -73,12 +61,5 @@ public class DatabaseConnection {
         }
          
      }
-    
-    
-    
-    
-    
-    
-    
     
 }

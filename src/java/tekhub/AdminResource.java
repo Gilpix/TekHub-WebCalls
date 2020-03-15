@@ -13,15 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Date;
-import static javax.management.Query.value;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -59,6 +56,7 @@ public class AdminResource {
         
     }
     
+     
     //Add Items to database
     @GET
     @Path("addItem&{ITEM_NAME}&{ITEM_DESC}&{IS_AVAILABLE}&{ITEM_CONDITION}")
@@ -113,21 +111,19 @@ public class AdminResource {
   return mainObject.toString();
     }
 
-    //Delete Students from database
     
+    //Delete Students from database
     @GET
     @Path("deleteStudent&{Student_Id}")
     @Produces("text/plain")
     public String deleteStudent(@PathParam("Student_Id") int student_id)
              {
-      
         Connection conn = null;
         conn=  databaseConn.getConnection(conn);
         int qRes;
         qRes = 0;
         int qRes2 = 0;
         int qRes3 = 0;
-
       
         try {           
             
@@ -144,14 +140,10 @@ public class AdminResource {
                   qRes=stm1.executeUpdate();
                   System.out.println("row deleted student "+qRes);
             
-    PreparedStatement stm = conn.prepareStatement(sql2);
+                  PreparedStatement stm = conn.prepareStatement(sql2);
                   qRes2=stm.executeUpdate();
                   System.out.println("row deleted user "+qRes2);
             
-                        
-        
-            
-                
 
                   if(qRes==1 && qRes2==1 || qRes3>1)
                   {
@@ -163,8 +155,6 @@ public class AdminResource {
                     mainObject.accumulate("Timestamp", timeStamp);
                   }
                     
- 
-      
                   databaseConn.closeConnection(conn,null,stm);
             
         } catch (SQLException ex) {
@@ -173,8 +163,8 @@ public class AdminResource {
   return mainObject.toString();
     }
     
-    //list all students
     
+    //list all students
     @GET
     @Path("listStudents")
     @Produces("text/plain")
@@ -234,6 +224,7 @@ public class AdminResource {
          return singleChoice.toString();
              }
     
+    //search student with name in database
      @GET
     @Path("searchStudent&{searchKey}")
     @Produces("text/plain")
@@ -295,7 +286,6 @@ public class AdminResource {
  
     
     //find item
-    
     @GET
     @Path("getItems")
     @Produces(MediaType.APPLICATION_JSON)
@@ -373,6 +363,7 @@ public class AdminResource {
             }
     
     
+    //Delete Items from database
     @GET
     @Path("deleteItem&{item_id}")
     @Produces("text/plain")
@@ -415,6 +406,8 @@ public class AdminResource {
   return mainObject.toString();
     }
     
+    
+    //search Item in database
         @GET
     @Path("searchItem&{searchKey}")
     @Produces("text/plain")
@@ -489,6 +482,8 @@ public class AdminResource {
          return singleChoice.toString();
       
             }
+
+
 //update  Items to database
     @GET
     @Path("updateItem&{ITEM_NAME}&{ITEM_DESC}&{ITEM_CONDITION}&{ITEM_AVAILABILITY}&{ITEM_ID}")
@@ -535,7 +530,9 @@ public class AdminResource {
              // throw new UnsupportedOperationException();
   return mainObject.toString();
     }
-    //list issues
+    
+
+//list all issues
     
         @GET
     @Path("listIssues")
@@ -640,6 +637,7 @@ public class AdminResource {
     }
     
     
+    //Logout admin
     @GET
     @Path("logout")
     @Produces("text/plain")
@@ -691,6 +689,7 @@ public class AdminResource {
              }
     
     
+    //List all Orders from database
             @GET
     @Path("listOrders")
     @Produces("text/plain")
